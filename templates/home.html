@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Based Diabetic Complication Prediction System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        /* Background Styling */
+        body {
+            background: url('{{ url_for("static", filename="bg.jpg") }}') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(to right, #2c3e50, #3498db);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Section Styling */
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, #3498db, transparent);
+            bottom: -10px;
+            left: 20%;
+        }
+
+        .section-subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #3498db;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .feature-desc {
+            color: #7f8c8d;
+        }
+
+        /* Technology Section */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .tech-card {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 2rem;
+            display: flex;
+            align-items: flex-start;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .tech-icon {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-right: 1.5rem;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .tech-content h3 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 0.8rem;
+        }
+
+        .tech-content p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, #2c3e50, #3498db);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .footer-links li {
+            margin: 0 1rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #f1c40f;
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 1.5rem;
+        }
+
+        /* Mobile Menu */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                flex-direction: column;
+                background: #2c3e50;
+                width: 80%;
+                height: calc(100vh - 70px);
+                padding: 2rem;
+                transition: all 0.3s;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links li {
+                margin: 1.5rem 0;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">🩺</span> DiabCare AI
+            </a>
+            
+            <button class="mobile-menu-btn" id="mobile-menu">☰</button>
+            
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="{{ url_for('index') }}">Prediction Tool</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#technology">Technology</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>AI-Powered Early Detection of Diabetic Complications</h1>
+            <p>Combining advanced computer vision and machine learning for accurate diagnosis of diabetic retinopathy and nephropathy</p>
+            <a href="{{ url_for('index') }}" class="cta-button">Start Prediction</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- About Section -->
+        <section class="section" id="about">
+            <div class="section-header">
+                <h2 class="section-title">About Our Project</h2>
+                <p class="section-subtitle">Pioneering early detection of diabetic complications through artificial intelligence</p>
+            </div>
+            
+            <p>Complications in diabetic patients such as retinal diseases and diabetic nephropathy need to be detected early for proper treatment. Our project proposes a hybrid AI diagnosis algorithm that combines:</p>
+            
+            <ul style="margin: 1.5rem 0 1.5rem 2rem;">
+                <li><strong>Swin Transformer</strong> for retinal image classification, replacing traditional CNNs</li>
+                <li><strong>Machine Learning algorithms</strong> (Random Forest + XGBoost) for tabular medical data analysis</li>
+                <li><strong>Explainable AI</strong> (SHAP and LIME) for model interpretability</li>
+            </ul>
+            
+            <p>Our web application enables users to upload their retinal images and input medical parameters to receive disease classification along with nephropathy risk assessments in an interactive and accessible manner.</p>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">👁️</div>
+                    <h3 class="feature-title">Retinal Disease Detection</h3>
+                    <p class="feature-desc">Accurately classify AMD, Glaucoma, Cataract and Diabetic Retinopathy using advanced image analysis</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔬</div>
+                    <h3 class="feature-title">Nephropathy Prediction</h3>
+                    <p class="feature-desc">Assess kidney complication risks based on clinical parameters like age, diabetes duration, blood pressure and more</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Explainable Results</h3>
+                    <p class="feature-desc">Understand the factors influencing predictions with transparent and interpretable AI explanations</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Technology Section -->
+        <section class="section" id="technology">
+            <div class="section-header">
+                <h2 class="section-title">Our Technology</h2>
+                <p class="section-subtitle">Leveraging cutting-edge AI for medical diagnostics</p>
+            </div>
+            
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon">🧠</div>
+                    <div class="tech-content">
+                        <h3>Swin Transformer</h3>
+                        <p>Hierarchical feature extraction through shifted window self-attention improves classification accuracy for retinal diseases, addressing overfitting issues common with CNNs.</p>
+                    </div>
+                </div>
+                
+                <div class="tech-card">
+                    <div class="tech-icon">📈</div>
+                    <div class="tech-content">
+                        <h3>Ensemble ML Models</h3>
+                        <p>Combining Random Forest and XGBoost algorithms for analyzing patient parameters like Age, Diabetes Duration, BP, HbA1c, BMI, and Lipid Levels to predict nephropathy risk.</p>
+                    </div>
+                </div>
+                
+                <div class="tech-card">
+                    <div class="tech-icon">🔍</div>
+                    <div class="tech-content">
+                        <h3>Explainable AI (XAI)</h3>
+                        <p>SHAP (SHapley Additive Explanations) and LIME (Local Interpretable Model-agnostic Explanations) provide transparency on feature importance and individual predictions.</p>
+                    </div>
+                </div>
+                
+                <div class="tech-card">
+                    <div class="tech-icon">🌐</div>
+                    <div class="tech-content">
+                        <h3>Interactive Web Application</h3>
+                        <p>User-friendly interface for uploading retinal images and inputting medical parameters, providing accessible AI diagnostics to patients and healthcare providers.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <p style="margin-bottom: 1.5rem;">Experience our prediction tool to see these technologies in action</p>
+                <a href="{{ url_for('index') }}" class="cta-button">Try Our Prediction Tool</a>
+            </div>
+        </section>
+        
+        <!-- Benefits Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Key Benefits</h2>
+                <p class="section-subtitle">Advancing diabetic care through innovation</p>
+            </div>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Improved Accuracy</h3>
+                    <p class="feature-desc">Higher diagnostic accuracy through advanced AI models compared to traditional methods</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔎</div>
+                    <h3 class="feature-title">Interpretability</h3>
+                    <p class="feature-desc">Transparent explanations of AI decisions to build trust with patients and healthcare providers</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⏱️</div>
+                    <h3 class="feature-title">Early Detection</h3>
+                    <p class="feature-desc">Identify complications at earlier stages when treatment is most effective</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3 class="feature-title">Accessibility</h3>
+                    <p class="feature-desc">Bringing advanced diagnostics to more patients through an easy-to-use web interface</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section class="section" id="contact">
+            <div class="section-header">
+                <h2 class="section-title">Contact Us</h2>
+                <p class="section-subtitle">Get in touch for more information</p>
+            </div>
+            
+            <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+                <p style="margin-bottom: 2rem;">For more information about our AI-based diagnostic system for diabetic complications, please reach out to our team.</p>
+                
+                <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #3498db; margin-bottom: 0.5rem;">Email</h3>
+                        <p>vignesh@gmail.com</p>
+                    </div>
+                    
+                    <div>
+                        <h3 style="color: #3498db; margin-bottom: 0.5rem;">Phone</h3>
+                        <p>+91 0123456789</p>
+                    </div>
+                </div>
+                
+                <a href="{{ url_for('index') }}" class="cta-button">Start Using Our Tool</a>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Chatbot interface -->
+    <div class="chat-icon" id="chat-icon">
+        <i>💬</i>
+    </div>
+    
+    <div class="chat-window" id="chat-window">
+        <div class="chat-header">
+            <div class="chat-title">
+                <span>🩺</span> DiabCare Assistant
+            </div>
+            <button class="close-chat" id="close-chat">✕</button>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input">
+            <textarea class="message-input" id="message-input" placeholder="Type your question here..." rows="1"></textarea>
+            <button class="send-button" id="send-button">
+                <i>➤</i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>DiabCare AI</h3>
+            <p>Advanced AI solutions for early detection of diabetic complications</p>
+            
+            <ul class="footer-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="{{ url_for('index') }}">Prediction Tool</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#technology">Technology</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            
+            <p class="copyright">&copy; 2025 DiabCare AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu');
+            const navLinks = document.getElementById('nav-links');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                navLinks.classList.toggle('active');
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    if (this.getAttribute('href') !== '#') {
+                        e.preventDefault();
+                        
+                        const targetId = this.getAttribute('href');
+                        const targetElement = document.querySelector(targetId);
+                        
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 80,
+                                behavior: 'smooth'
+                            });
+                            
+                            // Close mobile menu if open
+                            navLinks.classList.remove('active');
+                        }
+                    }
+                });
+            });
+            
+            // Highlight active menu item on scroll
+            window.addEventListener('scroll', function() {
+                const scrollPosition = window.scrollY;
+                
+                document.querySelectorAll('section').forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionBottom = sectionTop + section.offsetHeight;
+                    const sectionId = section.getAttribute('id');
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                        document.querySelectorAll('.nav-links a').forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${sectionId}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+                
+                // Highlight home when at the top
+                if (scrollPosition < 100) {
+                    document.querySelectorAll('.nav-links a').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#') {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

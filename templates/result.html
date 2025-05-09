@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        /* Background Styling */
+        body {
+            background: url('{{ url_for("static", filename="bg.jpg") }}') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(to right, #2c3e50, #3498db);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            padding: 20px;
+        }
+
+        /* Main Container */
+        .container {
+            background: linear-gradient(to bottom, #ffffff, #f7f9fc);
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-size: 28px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 3px;
+            background: linear-gradient(to right, #3498db, transparent);
+            bottom: -10px;
+            left: 15%;
+        }
+
+        h3 {
+            color: #3498db;
+            margin: 15px 0;
+            font-size: 20px;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .progress-steps:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #e9ecef;
+            top: 25px;
+            z-index: 1;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            border: 2px solid #3498db;
+            color: #3498db;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .step.completed .step-number {
+            background: #3498db;
+            color: white;
+        }
+
+        .step.active .step-number {
+            background: #3498db;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .step.active .step-text {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .step.completed .step-text {
+            color: #3498db;
+        }
+
+        /* Results Section */
+        .results {
+            margin-top: 20px;
+            padding: 30px;
+            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .results-icon {
+            font-size: 32px;
+            color: #3498db;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-header {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #f1f2f6;
+        }
+
+        .result-icon {
+            font-size: 24px;
+            background: #f8f9fa;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3498db;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .result-body {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .result-normal {
+            color: #27ae60;
+        }
+
+        .result-warning {
+            color: #f39c12;
+        }
+
+        .result-danger {
+            color: #e74c3c;
+        }
+
+        .result-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .badge-negative {
+            background-color: rgba(39, 174, 96, 0.15);
+            color: #27ae60;
+        }
+
+        .badge-positive {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        .badge-warning {
+            background-color: rgba(243, 156, 18, 0.15);
+            color: #f39c12;
+        }
+
+        .result-info {
+            padding: 0 20px 20px;
+            font-size: 14px;
+            color: #7f8c8d;
+            text-align: left;
+        }
+
+        /* Image Display */
+        .image-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .image-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f1f2f6;
+            padding-bottom: 15px;
+        }
+
+        .image-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .preview-image {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 10px;
+            margin: 0 auto;
+            display: block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            cursor: zoom-in;
+        }
+
+        .preview-image:hover {
+            transform: scale(1.03);
+        }
+
+        /* Button Group */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .button-group a {
+            text-decoration: none;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, #2980b9, #3498db);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-icon {
+            font-size: 20px;
+        }
+
+        .btn-doctor {
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+        }
+
+        .btn-doctor:hover {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+        }
+
+        .btn-report {
+            background: linear-gradient(to right, #e67e22, #f39c12);
+        }
+
+        .btn-report:hover {
+            background: linear-gradient(to right, #f39c12, #e67e22);
+        }
+
+        .btn-home {
+            background: linear-gradient(to right, #8e44ad, #9b59b6);
+            margin-top: 20px;
+        }
+
+        .btn-home:hover {
+            background: linear-gradient(to right, #9b59b6, #8e44ad);
+        }
+
+        /* Additional Info Section */
+        .next-steps {
+            margin-top: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .next-steps-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f1f2f6;
+            padding-bottom: 15px;
+        }
+
+        .step-list {
+            text-align: left;
+            list-style-type: none;
+        }
+
+        .step-list li {
+            padding: 10px 0;
+            border-bottom: 1px dashed #f1f2f6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-list li:last-child {
+            border-bottom: none;
+        }
+
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3498db;
+            font-size: 14px;
+        }
+
+        /* Image Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            margin: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            h2 {
+                font-size: 24px;
+            }
+            
+            .results {
+                padding: 20px 15px;
+            }
+            
+            .result-body {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .progress-steps {
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .step {
+                min-width: 80px;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                flex-direction: column;
+                background: #2c3e50;
+                width: 80%;
+                height: calc(100vh - 70px);
+                padding: 2rem;
+                transition: all 0.3s;
+                z-index: 1000;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links li {
+                margin: 1.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="logo">
+                <span class="logo-icon">🩺</span> DiabCare AI
+            </a>
+            
+            <button class="mobile-menu-btn" id="mobile-menu">☰</button>
+            
+            <ul class="nav-links" id="nav-links">
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('index') }}" class="active">Prediction Tool</a></li>
+                <li><a href="{{ url_for('home') }}#about">About</a></li>
+                <li><a href="{{ url_for('home') }}#technology">Technology</a></li>
+                <li><a href="{{ url_for('home') }}#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <div class="container">
+            <h2>Prediction Results</h2>
+
+            <!-- Progress Indicator -->
+            <div class="progress-steps">
+                <div class="step completed">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Select Tests</div>
+                </div>
+                <div class="step completed">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Input Data</div>
+                </div>
+                <div class="step active">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Results</div>
+                </div>
+            </div>
+
+            <div class="results">
+                <div class="results-header">
+                    <div class="results-icon">📊</div>
+                    <h3>Diagnostic Analysis</h3>
+                </div>
+
+                {% if dr_result %}
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-icon">👁️</div>
+                        <div class="result-title">Diabetic Retinopathy Assessment</div>
+                    </div>
+                    <div class="result-body">
+                        <div class="result-value {% if 'No DR' in dr_result %}result-normal{% elif 'Mild' in dr_result or 'Moderate' in dr_result %}result-warning{% else %}result-danger{% endif %}">
+                            {{ dr_result }}
+                        </div>
+                        <div class="result-badge {% if 'No DR' in dr_result %}badge-negative{% elif 'Mild' in dr_result or 'Moderate' in dr_result %}badge-warning{% else %}badge-positive{% endif %}">
+                            {% if 'No DR' in dr_result %}
+                                Normal
+                            {% elif 'Mild' in dr_result or 'Moderate' in dr_result %}
+                                Attention Required
+                            {% else %}
+                                Immediate Attention
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="result-info">
+                        {% if 'No DR' in dr_result %}
+                            Your retinal scan shows no signs of diabetic retinopathy. Continue regular check-ups.
+                        {% elif 'Mild' in dr_result %}
+                            Early signs of diabetic retinopathy detected. Follow-up with an ophthalmologist is recommended.
+                        {% elif 'Moderate' in dr_result %}
+                            Moderate signs of diabetic retinopathy detected. Consultation with a specialist is advised.
+                        {% else %}
+                            Severe signs of diabetic retinopathy detected. Immediate ophthalmological consultation is needed.
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if dn_result %}
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-icon">🔬</div>
+                        <div class="result-title">Diabetic Nephropathy Assessment</div>
+                    </div>
+                    <div class="result-body">
+                        <div class="result-value {% if 'No Nephropathy' in dn_result %}result-normal{% elif 'Early' in dn_result %}result-warning{% else %}result-danger{% endif %}">
+                            {{ dn_result }}
+                        </div>
+                        <div class="result-badge {% if 'No Nephropathy' in dn_result %}badge-negative{% elif 'Early' in dn_result %}badge-warning{% else %}badge-positive{% endif %}">
+                            {% if 'No Nephropathy' in dn_result %}
+                                Normal
+                            {% elif 'Early' in dn_result %}
+                                Attention Required
+                            {% else %}
+                                Immediate Attention
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="result-info">
+                        {% if 'No Nephropathy' in dn_result %}
+                            Your clinical parameters show no signs of diabetic nephropathy. Continue regular monitoring.
+                        {% elif 'Early' in dn_result %}
+                            Early signs of diabetic nephropathy detected. Follow-up with a nephrologist is recommended.
+                        {% else %}
+                            Advanced signs of diabetic nephropathy detected. Immediate nephrological consultation is needed.
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if image_path %}
+                <div class="image-container">
+                    <div class="image-header">
+                        <div class="result-icon">📸</div>
+                        <h3 class="image-title">Analyzed Retinal Image</h3>
+                    </div>
+                    <img src="{{ url_for('static', filename=image_path.replace('static/', '').replace('\\', '/')) }}"
+                         alt="Uploaded Retinal Image" class="preview-image" id="retinalImage">
+                </div>
+                {% endif %}
+
+                <!-- Next Steps Guidance -->
+                <div class="next-steps">
+                    <div class="next-steps-header">
+                        <div class="result-icon">📋</div>
+                        <h3>Recommended Next Steps</h3>
+                    </div>
+                    <ul class="step-list">
+                        <li>
+                            <div class="step-icon">1</div>
+                            <span>Download your detailed medical report for your records</span>
+                        </li>
+                        <li>
+                            <div class="step-icon">2</div>
+                            <span>Schedule an appointment with a specialist for follow-up care</span>
+                        </li>
+                        <li>
+                            <div class="step-icon">3</div>
+                            <span>Continue monitoring blood glucose levels and follow treatment plans</span>
+                        </li>
+                        {% if dr_result and 'No DR' not in dr_result or dn_result and 'No Nephropathy' not in dn_result %}
+                        <li>
+                            <div class="step-icon">⚠️</div>
+                            <span>Consult with your healthcare provider within the next 2 weeks</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="button-group">
+                    <!-- Find Doctor Button -->
+                    <a href="#" onclick="findNearbyDoctors(); return false;">
+                        <button class="btn btn-doctor">
+                            <span class="btn-icon">👨‍⚕️</span> Find Specialist
+                        </button>
+                    </a>
+
+                    <!-- Download Report Button -->
+                    <a href="{{ url_for('download_report', dr=dr_result, dn=dn_result,
+                                       image=image_path.replace('\\', '/'), dn_params=dn_parameters) }}">
+                        <button class="btn btn-report">
+                            <span class="btn-icon">📄</span> Download Report
+                        </button>
+                    </a>
+                </div>
+
+                <a href="{{ url_for('index') }}">
+                    <button class="btn btn-home">
+                        <span class="btn-icon">🏠</span> Start New Prediction
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot interface -->
+    <div class="chat-icon" id="chat-icon">
+        <i>💬</i>
+    </div>
+    
+    <div class="chat-window" id="chat-window">
+        <div class="chat-header">
+            <div class="chat-title">
+                <span>🩺</span> DiabCare Assistant
+            </div>
+            <button class="close-chat" id="close-chat">✕</button>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input">
+            <textarea class="message-input" id="message-input" placeholder="Type your question here..." rows="1"></textarea>
+            <button class="send-button" id="send-button">
+                <i>➤</i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu');
+            const navLinks = document.getElementById('nav-links');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                navLinks.classList.toggle('active');
+            });
+            
+            // Image Modal Functionality
+            const modal = document.getElementById("imageModal");
+            const retinalImage = document.getElementById("retinalImage");
+            const modalImage = document.getElementById("modalImage");
+            
+            if (retinalImage) {
+                retinalImage.onclick = function() {
+                    modal.style.display = "flex";
+                    modalImage.src = this.src;
+                }
+                
+                modal.onclick = function() {
+                    modal.style.display = "none";
+                }
+            }
+        });
+
+        function findNearbyDoctors() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    let latitude = position.coords.latitude;
+                    let longitude = position.coords.longitude;
+                    
+                    // First try to determine which specialist to look for
+                    let searchTerm = "";
+                    {% if dr_result and 'No DR' not in dr_result %}
+                        searchTerm = "Ophthalmologist+Retina+Specialist";
+                    {% elif dn_result and 'No Nephropathy' not in dn_result %}
+                        searchTerm = "Nephrologist+Kidney+Specialist";
+                    {% else %}
+                        searchTerm = "Diabetic+Retinopathy+and+Nephropathy+Specialist";
+                    {% endif %}
+
+                    let googleSearchURL = `https://www.google.com/maps/search/${searchTerm}/@${latitude},${longitude},14z`;
+                    window.open(googleSearchURL, '_blank');
+                }, function (error) {
+                    console.log("Geolocation error:", error);
+                    alert("Location access denied. We'll search for specialists without your specific location.");
+                    
+                    // Determine which specialist to look for
+                    let searchTerm = "";
+                    {% if dr_result and 'No DR' not in dr_result %}
+                        searchTerm = "Ophthalmologist+Retina+Specialist";
+                    {% elif dn_result and 'No Nephropathy' not in dn_result %}
+                        searchTerm = "Nephrologist+Kidney+Specialist";
+                    {% else %}
+                        searchTerm = "Diabetic+Retinopathy+and+Nephropathy+Specialist";
+                    {% endif %}
+                    
+                    window.open(`https://www.google.com/maps/search/${searchTerm}/`, "_blank");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser. We'll search for specialists without location data.");
+                window.open("https://www.google.com/maps/search/Diabetic+Retinopathy+and+Nephropathy+Specialist/", "_blank");
+            }
+        }
+    </script>
+
+</body>
+</html>
