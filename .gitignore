@@ -49,6 +49,7 @@ var/
 
 # Dataset files and large files
 dataset/
+Model/
 static/uploads/
 static/reports/
 
