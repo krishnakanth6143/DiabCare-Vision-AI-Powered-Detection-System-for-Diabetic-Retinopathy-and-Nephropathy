@@ -1,4 +1,4 @@
-// const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_KEY = "your_API_Key";
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 class DiabCareBot {
