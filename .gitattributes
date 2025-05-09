@@ -1,2 +1,9 @@
+dataset/**/*.png filter=lfs diff=lfs merge=lfs -text
+dataset/**/*.csv filter=lfs diff=lfs merge=lfs -text
+dataset/**/*.pkl filter=lfs diff=lfs merge=lfs -text
+static/uploads/*.png filter=lfs diff=lfs merge=lfs -text
+static/reports/*.pdf filter=lfs diff=lfs merge=lfs -text
+Model/*.pth filter=lfs diff=lfs merge=lfs -text
+Model/*.pkl filter=lfs diff=lfs merge=lfs -text
 *.pth filter=lfs diff=lfs merge=lfs -text
 *.pkl filter=lfs diff=lfs merge=lfs -text
