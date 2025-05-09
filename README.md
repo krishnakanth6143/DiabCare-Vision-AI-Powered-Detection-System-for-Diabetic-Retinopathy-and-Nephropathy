@@ -106,9 +106,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Contact
-
-- Email: vignesh@gmail.com
-- Phone: +91 0123456789
 - GitHub: [krishnakanth6143](https://github.com/krishnakanth6143)
 
 ---
