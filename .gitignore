@@ -23,17 +23,59 @@ var/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Dataset files (selective approach)
-# Keep the directory structure but limit the number of image files
-dataset/dataset_retino/gaussian_filtered_images/*/*.png
-!dataset/dataset_retino/gaussian_filtered_images/*/*.png[0-9]
-!dataset/dataset_retino/gaussian_filtered_images/export.pkl
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Keep only a few example files in uploads and reports
-static/uploads/*.png
-!static/uploads/00*
-static/reports/*.pdf
-!static/reports/diabetic_report_2025040115*.pdf
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Dataset files and large files
+dataset/
+Model/
+static/uploads/
+static/reports/
+
+# Only include critical code files
+!app.py
+!Diabetic_nephropathy.ipynb
+!Diabetic_retinopathy.ipynb
+!README.md
+!requirements.txt
+!templates/
+!static/css/
+!static/js/
+!static/bg.jpg
+
+# Virtual Environment
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+
+# OS specific
+.DS_Store
+Thumbs.db
 
 # Virtual Environment
 venv/
