@@ -20,26 +20,27 @@ var/
 .installed.cfg
 *.egg
 
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Dataset files
+dataset/dataset_retino/gaussian_filtered_images/
+static/uploads/
+static/reports/
+
+# Large model files
+# Uncomment if you want to exclude them
+# Model/*.pth
+# Model/*.pkl
+
 # Virtual Environment
 venv/
 ENV/
 
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# VS Code
+# IDE
+.idea/
 .vscode/
 
-# Environment variables
-.env
-
-# Model files (uncomment if you don't want to include large model files)
-# *.pth
-# *.pkl
-
-# Cache
-.cache/
-
-# Logs
-logs/
-*.log
+# OS specific
+.DS_Store
+Thumbs.db
