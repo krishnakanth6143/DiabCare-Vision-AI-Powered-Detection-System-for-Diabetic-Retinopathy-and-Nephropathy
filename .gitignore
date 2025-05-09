@@ -23,15 +23,17 @@ var/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Dataset files
-dataset/dataset_retino/gaussian_filtered_images/
-static/uploads/
-static/reports/
+# Dataset files (selective approach)
+# Keep the directory structure but limit the number of image files
+dataset/dataset_retino/gaussian_filtered_images/*/*.png
+!dataset/dataset_retino/gaussian_filtered_images/*/*.png[0-9]
+!dataset/dataset_retino/gaussian_filtered_images/export.pkl
 
-# Large model files
-# Uncomment if you want to exclude them
-# Model/*.pth
-# Model/*.pkl
+# Keep only a few example files in uploads and reports
+static/uploads/*.png
+!static/uploads/00*
+static/reports/*.pdf
+!static/reports/diabetic_report_2025040115*.pdf
 
 # Virtual Environment
 venv/
