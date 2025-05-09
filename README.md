@@ -1,10 +1,21 @@
 # DiabCare: AI-Powered Detection System for Diabetic Retinopathy and Nephropathy
 
-![DiabCare Banner](static/bg.jpg)
+
+![image](https://github.com/user-attachments/assets/d89e45c3-59f8-49aa-b020-bf45bbe3e09f)
+![image](https://github.com/user-attachments/assets/84af051b-e230-41ec-b40b-56cfacefbf54)
+![image](https://github.com/user-attachments/assets/e05836b0-bfb3-491e-8453-d83365bcb5a0)
+
+
+
 
 ## Overview
 
 DiabCare is an advanced AI-powered web application designed to detect and classify diabetic complications, specifically diabetic retinopathy and nephropathy, utilizing state-of-the-art deep learning and machine learning algorithms. The system combines computer vision models for retinal image analysis with ensemble machine learning approaches for predicting kidney complications based on medical parameters.
+
+![image](https://github.com/user-attachments/assets/0a9589a3-0fa0-4017-9998-447a84b1f90b)
+![image](https://github.com/user-attachments/assets/888c9d5b-3771-4033-aa98-eaa7700205e7)
+
+
 
 ## Features
 
