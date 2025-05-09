@@ -45,12 +45,10 @@ var/
 .installed.cfg
 *.egg
 
-# Jupyter Notebook
-.ipynb_checkpoints
+
 
 # Dataset files and large files
 dataset/
-Model/
 static/uploads/
 static/reports/
 
